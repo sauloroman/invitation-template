@@ -4,7 +4,7 @@
     "palette": 2,
     "buttonVariant": "primary",
     "menu": {
-      "show": false,
+      "show": true,
       "variant": "bar",
       "title": "María y Carlos",
       "buttonVariant": "icon"
