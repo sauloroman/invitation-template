@@ -1,0 +1,100 @@
+{
+  "theme": {
+    "fontPack": 2,
+    "palette": 7,
+    "buttonVariant": "primary",
+    "menu": {
+      "variant": "floating",
+      "title": "María y Carlos",
+      "buttonVariant": "icon"
+    },
+    "music": {
+      "variant": "floating",
+      "buttonVariant": "secondary",
+      "songTitle": "Música de fondo",
+      "artistName": "Música del evento"
+    }
+  },
+  "config": {
+    "hasTicketingSystem": false,
+    "hasRSVP": true,
+    "hasMusic": true
+  },
+  "sections": {
+    "hero": {
+      "showHero": true,
+      "names": "María & Carlos",
+      "subtitle": "Nos complace invitarte a celebrar el día más importante de nuestras vidas",
+      "date": "20 DE NOVIEMBRE, 2026",
+      "bgImage": ""
+    },
+    "countdown": {
+      "showCountdown": true,
+      "targetDate": "2026-11-20T17:00:00"
+    },
+    "places": {
+      "showPlaces": true,
+      "locations": [
+        {
+          "title": "Ceremonia Religiosa",
+          "location": "Catedral Metropolitana",
+          "time": "17:00 HRS",
+          "date": "2026-11-20",
+          "url": "https://maps.google.com"
+        },
+        {
+          "title": "Recepción",
+          "location": "Salón Los Pinos",
+          "time": "19:00 HRS",
+          "date": "2026-11-20",
+          "url": "https://maps.google.com"
+        }
+      ]
+    },
+    "itinerary": {
+      "showItinerary": true,
+      "itinerary": [
+        {
+          "time": "17:00 HRS",
+          "event": "Ceremonia Religiosa"
+        },
+        {
+          "time": "19:00 HRS",
+          "event": "Recepción & Fiesta"
+        }
+      ]
+    },
+    "dressCode": {
+      "showDressCode": true,
+      "title": "Código de Vestimenta",
+      "description": "Te sugerimos vestir de etiqueta semi-formal.",
+      "attire": {
+        "men": "Traje oscuro y corbata.",
+        "women": "Vestido largo o cocktail."
+      },
+      "colors": {
+        "suggested": [
+          "negro",
+          "azul oscuro",
+          "borgoña"
+        ],
+        "avoid": [
+          "blanco",
+          "rosa",
+          "beige"
+        ]
+      }
+    },
+    "gallery": {
+      "showGallery": true,
+      "title": "Galería de Fotos",
+      "images": []
+    },
+    "presents": {
+      "showPresents": true
+    },
+    "confirmation": {
+      "showConfirmation": true
+    }
+  }
+}
