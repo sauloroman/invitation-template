@@ -5,9 +5,9 @@
 
     &--floating {
         position: fixed;
-        bottom: 2rem;
-        right: 2rem;
-        z-index: 800;
+        bottom: 2.4rem;
+        right: 2.4rem;
+        z-index: 950;
 
         &.music-player--playing .btn {
             animation: pulseGlow 2.5s ease-in-out infinite;
@@ -17,6 +17,7 @@
     &--card {
         width: 100%;
         max-width: 44rem;
+        margin: 2rem auto;
 
         .music-player__card {
             display: flex;
@@ -25,6 +26,7 @@
             padding: 1.6rem 2.2rem;
             background-color: #ffffff;
             border: 1px solid vars.$color-primary-100;
+            border-radius: 1.6rem;
             box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
             transition: all 0.3s ease;
 
@@ -81,7 +83,7 @@
     }
 
     // ----------------------------------------------------------------------
-    // 3. Ecualizador Animado
+    // Ecualizador Animado
     // ----------------------------------------------------------------------
     &__equalizer {
         display: flex;

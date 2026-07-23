@@ -16,7 +16,7 @@ const rl = readline.createInterface({
 
 const ask = (query, defaultValue = '') => {
     return new Promise((resolve) => {
-        const promptText = defaultValue ? `${query} (Predeterminado: ${defaultValue}): ` : `${query}: `
+        const promptText = defaultValue ? `${query} (Predeterminado: "${defaultValue}"): ` : `${query}: `
         rl.question(promptText, (answer) => {
             resolve(answer.trim() || defaultValue)
         })
@@ -24,11 +24,11 @@ const ask = (query, defaultValue = '') => {
 }
 
 const askSelect = async (query, options) => {
-    console.log(`\n${query}`)
+    console.log(`\n📌 ${query}`)
     options.forEach((opt, index) => {
-        console.log(`  ${index + 1}) ${opt.label}`)
+        console.log(`   [${index + 1}] ${opt.label}`)
     })
-    const choiceStr = await ask('Selecciona una opción (número)', '1')
+    const choiceStr = await ask('   Selecciona una opción (número)', '1')
     const choiceNum = parseInt(choiceStr, 10)
     if (isNaN(choiceNum) || choiceNum < 1 || choiceNum > options.length) {
         return options[0].value
@@ -38,7 +38,7 @@ const askSelect = async (query, options) => {
 
 const askBoolean = async (query, defaultValue = true) => {
     const defaultStr = defaultValue ? 'S' : 'N'
-    const answer = await ask(`${query} (S/N)`, defaultStr)
+    const answer = await ask(`📌 ${query} (S/N)`, defaultStr)
     return answer.toUpperCase().startsWith('S')
 }
 
@@ -64,23 +64,38 @@ const copyRecursive = (src, dest) => {
     }
 }
 
+const formatDateString = (dateStr) => {
+    try {
+        const dateObj = new Date(dateStr)
+        if (!isNaN(dateObj.getTime())) {
+            return dateObj.toLocaleDateString('es-ES', {
+                day: 'numeric',
+                month: 'long',
+                year: 'numeric',
+            }).toUpperCase()
+        }
+    } catch {
+        // Fallback return raw string
+    }
+    return '20 DE NOVIEMBRE DE 2026'
+}
+
 async function main() {
-    console.log('\n==================================================')
-    console.log('  ✨ ASISTENTE INTERACTIVO DE CREACIÓN DE INVITACIONES ✨')
-    console.log('==================================================\n')
+    console.log('\n===================================================================')
+    console.log('  ✨ WIZARD INTERACTIVO: GENERADOR DE INVITACIONES PARA CLIENTES ✨')
+    console.log('===================================================================\n')
 
     // 1. Datos del Proyecto
-    const defaultFolderName = 'invitacion-' + Date.now().toString().slice(-4)
-    const folderName = await ask('1. Nombre del proyecto / carpeta para el cliente', defaultFolderName)
-
+    const defaultFolderName = 'invitacion-cliente-' + Date.now().toString().slice(-4)
+    const folderName = await ask('1. Nombre del proyecto / carpeta cliente', defaultFolderName)
     const baseOutputDir = await ask('2. Ruta raíz de almacenamiento de clientes', DEFAULT_CLIENTS_DIR)
     const targetPath = path.join(baseOutputDir, folderName)
 
-    console.log(`\n📁 El nuevo proyecto se creará en:\n   ${targetPath}\n`)
+    console.log(`\n📁 El nuevo proyecto se generará en:\n   ${targetPath}\n`)
 
     // 2. Información del Evento
     const names = await ask('3. Nombres principales (ej: María & Carlos o Mis XV Sofía)', 'María & Carlos')
-    const eventDate = await ask('4. Fecha y Hora del Evento (ISO o YYYY-MM-DDTHH:mm:ss)', '2026-11-20T17:00:00')
+    const eventDate = await ask('4. Fecha y Hora del Evento (YYYY-MM-DDTHH:mm:ss)', '2026-11-20T17:00:00')
     const subtitle = await ask(
         '5. Subtítulo / Frase de bienvenida',
         'Nos complace invitarte a celebrar el día más importante de nuestras vidas'
@@ -115,7 +130,7 @@ async function main() {
     const menuSelection = await askSelect('9. Configuración del Menú de Navegación:', [
         { label: 'Barra Superior Fija (bar)', value: { show: true, variant: 'bar' } },
         { label: 'Botón Flotante Lateral (floating)', value: { show: true, variant: 'floating' } },
-        { label: 'Desactivar Menú', value: { show: false, variant: 'floating' } },
+        { label: 'Desactivar Menú', value: { show: false, variant: 'bar' } },
     ])
 
     const musicSelection = await askSelect('10. Configuración del Reproductor de Música:', [
@@ -129,7 +144,7 @@ async function main() {
     const hasRSVP = await askBoolean('12. ¿Habilitar confirmación de asistencia RSVP?', true)
 
     // 5. Secciones
-    console.log('\n--- Configuración de Secciones ---')
+    console.log('\n--- Configuración de Módulos de Secciones ---')
     const showCountdown = await askBoolean('13. ¿Incluir sección de Cuenta Regresiva?', true)
     const showPlaces = await askBoolean('14. ¿Incluir sección de Ubicaciones / Lugares?', true)
     const showItinerary = await askBoolean('15. ¿Incluir sección de Itinerario?', true)
@@ -139,22 +154,23 @@ async function main() {
 
     rl.close()
 
-    console.log('\n⏳ Generando nuevo proyecto de invitación...')
+    console.log('\n===================================================================')
+    console.log(' ⏳ GENERANDO PROYECTO DE INVITACIÓN COMERCIAL...')
+    console.log('===================================================================\n')
 
-    // Construcción del objeto invitation.config.json
     const configManifest = {
         theme: {
             fontPack,
             palette,
             buttonVariant: 'primary',
             menu: {
-                show: menuSelection.show,
+                show: Boolean(menuSelection.show),
                 variant: menuSelection.variant,
                 title: names,
                 buttonVariant: 'icon',
             },
             music: {
-                show: musicSelection.show,
+                show: Boolean(musicSelection.show),
                 variant: musicSelection.variant,
                 buttonVariant: 'primary',
                 songTitle: 'Música de fondo',
@@ -164,19 +180,15 @@ async function main() {
         config: {
             hasTicketingSystem,
             hasRSVP,
-            hasMusic: musicSelection.show,
-            hasMenu: menuSelection.show,
+            hasMusic: Boolean(musicSelection.show),
+            hasMenu: Boolean(menuSelection.show),
         },
         sections: {
             hero: {
                 showHero: true,
                 names,
                 subtitle,
-                date: new Date(eventDate).toLocaleDateString('es-ES', {
-                    day: 'numeric',
-                    month: 'long',
-                    year: 'numeric',
-                }).toUpperCase(),
+                date: formatDateString(eventDate),
                 bgImage: '',
             },
             message: {
@@ -236,25 +248,25 @@ async function main() {
     // Copiar la estructura del template a la carpeta destino
     copyRecursive(TEMPLATE_ROOT, targetPath)
 
-    // Guardar el invitation.config.json personalizado
+    // Escribir invitation.config.json
     const configPath = path.join(targetPath, 'invitation.config.json')
     fs.writeFileSync(configPath, JSON.stringify(configManifest, null, 2), 'utf-8')
 
-    console.log('✅ Archivo invitation.config.json generado exitosamente.')
+    console.log('✅ Archivo invitation.config.json configurado correctamente.')
 
-    // Ejecutar sincronización de tema en el proyecto recién generado
+    // Ejecutar la sincronización del tema en la carpeta del cliente
     try {
-        console.log('🎨 Sincronizando tokens de tema SCSS...')
-        execSync('npm run theme:sync', { cwd: targetPath, stdio: 'inherit' })
+        console.log('🎨 Sincronizando tokens de tema SCSS en la carpeta del cliente...')
+        execSync('node scripts/sync-theme.js', { cwd: targetPath, stdio: 'inherit' })
     } catch (e) {
-        console.warn('⚠️ No se pudo ejecutar theme:sync automáticamente. Puedes ejecutarlo con npm run theme:sync dentro del proyecto.')
+        console.warn('⚠️ Nota: Recuerda ejecutar npm run theme:sync en el proyecto generado si es necesario.')
     }
 
-    console.log('\n==================================================')
-    console.log(' 🎉 ¡PROYECTO DE INVITACIÓN CREADO CON ÉXITO! 🎉')
-    console.log('==================================================\n')
-    console.log(`📌 Ubicación: ${targetPath}`)
-    console.log('\nPara iniciar el desarrollo del proyecto ejecuta:\n')
+    console.log('\n===================================================================')
+    console.log(' 🎉 ¡PROYECTO DE INVITACIÓN CREADO Y CONFIGURADO CON ÉXITO! 🎉')
+    console.log('===================================================================\n')
+    console.log(`📌 Carpeta del Cliente: ${targetPath}\n`)
+    console.log('Para iniciar el servidor de desarrollo del nuevo proyecto, ejecuta:\n')
     console.log(`   cd "${targetPath}"`)
     console.log('   npm install')
     console.log('   npm run dev\n')
