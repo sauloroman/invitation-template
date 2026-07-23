@@ -8,6 +8,7 @@
     "prebuild": "npm run theme:sync",
     "theme:sync": "node scripts/sync-theme.js",
     "theme:set": "node scripts/set-theme.js",
+    "optimize-images": "node scripts/optimize-images.js",
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
