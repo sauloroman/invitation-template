@@ -1,7 +1,7 @@
 {
   "theme": {
-    "fontPack": 2,
-    "palette": 7,
+    "fontPack": 4,
+    "palette": 2,
     "buttonVariant": "primary",
     "menu": {
       "variant": "floating",
@@ -10,7 +10,7 @@
     },
     "music": {
       "variant": "floating",
-      "buttonVariant": "secondary",
+      "buttonVariant": "primary",
       "songTitle": "Música de fondo",
       "artistName": "Música del evento"
     }
@@ -30,7 +30,7 @@
     },
     "countdown": {
       "showCountdown": true,
-      "targetDate": "2026-11-20T17:00:00"
+      "targetDate": "2026-07-24T17:00:00"
     },
     "places": {
       "showPlaces": true,

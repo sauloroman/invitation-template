@@ -25,8 +25,8 @@ export interface SectionItemConfig {
 }
 
 export interface SectionsConfig {
-    hero?: SectionItemConfig & { showHero?: boolean }
-    countdown?: SectionItemConfig & { showCountdown?: boolean }
+    hero?: SectionItemConfig & { showHero?: boolean; names?: string; subtitle?: string; date?: string }
+    countdown?: SectionItemConfig & { showCountdown?: boolean; targetDate?: string }
     places?: SectionItemConfig & { showPlaces?: boolean }
     itinerary?: SectionItemConfig & { showItinerary?: boolean }
     dressCode?: SectionItemConfig & { showDressCode?: boolean }
