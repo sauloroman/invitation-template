@@ -12,6 +12,7 @@ export interface MenuItem {
 }
 
 export interface MenuProps {
+    show?: boolean
     variant?: MenuVariant
     buttonVariant?: ButtonVariant
     title?: string

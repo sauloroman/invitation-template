@@ -8,12 +8,15 @@ import { MenuSidebar } from './MenuSidebar'
 
 export const Menu: React.FC<MenuProps> = (props) => {
     const {
+        isMenuVisible,
         activeVariant,
         activeTitle,
         activeBtnVariant,
         activeItems,
         onOpenMenu,
     } = useMenu(props)
+
+    if (!isMenuVisible) return null
 
     return (
         <>

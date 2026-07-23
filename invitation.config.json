@@ -4,11 +4,13 @@
     "palette": 2,
     "buttonVariant": "primary",
     "menu": {
-      "variant": "floating",
+      "show": false,
+      "variant": "bar",
       "title": "María y Carlos",
       "buttonVariant": "icon"
     },
     "music": {
+      "show": true,
       "variant": "floating",
       "buttonVariant": "primary",
       "songTitle": "Música de fondo",
@@ -18,7 +20,8 @@
   "config": {
     "hasTicketingSystem": false,
     "hasRSVP": true,
-    "hasMusic": true
+    "hasMusic": true,
+    "hasMenu": true
   },
   "sections": {
     "hero": {
@@ -27,6 +30,10 @@
       "subtitle": "Nos complace invitarte a celebrar el día más importante de nuestras vidas",
       "date": "20 DE NOVIEMBRE, 2026",
       "bgImage": ""
+    },
+    "message": {
+      "showMessage": true,
+      "message": "Te invitamos de corazón a acompañarnos en este momento tan especial y celebrar juntos el amor que nos une."
     },
     "countdown": {
       "showCountdown": true,

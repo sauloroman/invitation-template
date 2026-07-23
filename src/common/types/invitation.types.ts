@@ -7,11 +7,13 @@ export interface ThemeConfig {
     palette: number
     buttonVariant?: ButtonVariant
     menu?: {
+        show?: boolean
         variant?: MenuVariant
         title?: string
         buttonVariant?: ButtonVariant
     }
     music?: {
+        show?: boolean
         variant?: MusicPlayerVariant
         buttonVariant?: ButtonVariant
         songTitle?: string

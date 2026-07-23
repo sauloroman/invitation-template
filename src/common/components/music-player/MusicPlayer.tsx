@@ -8,6 +8,7 @@ import type { MusicPlayerProps } from '@/common/types'
 export const MusicPlayer: React.FC<MusicPlayerProps> = (props) => {
     const {
         isPlaying,
+        isMusicVisible,
         audioRef,
         activeVariant,
         activeBtnVariant,
@@ -15,6 +16,8 @@ export const MusicPlayer: React.FC<MusicPlayerProps> = (props) => {
         activeArtistName,
         onToggleMusic,
     } = useMusicPlayer(props)
+
+    if (!isMusicVisible) return null
 
     const variantClass = `music-player--${activeVariant}`
     const playingClass = isPlaying ? 'music-player--playing' : ''

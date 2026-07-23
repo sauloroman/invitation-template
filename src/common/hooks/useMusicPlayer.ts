@@ -9,7 +9,7 @@ export const useMusicPlayer = (props?: MusicPlayerProps) => {
     const dispatch = useDispatch()
     const isPlaying = useSelector((state: RootState) => state.music.isPlaying)
     const audioRef = useRef<HTMLAudioElement | null>(null)
-    const { theme } = useInvitationConfig()
+    const { theme, config } = useInvitationConfig()
 
     useEffect(() => {
         if (!audioRef.current) return
@@ -26,6 +26,7 @@ export const useMusicPlayer = (props?: MusicPlayerProps) => {
     const onPauseMusic = () => dispatch(pauseMusic())
     const onToggleMusic = () => dispatch(toggleMusic())
 
+    const isMusicVisible = props?.show ?? theme.music?.show ?? config?.hasMusic ?? true
     const activeVariant: MusicPlayerVariant = props?.variant || theme.music?.variant || 'floating'
     const activeBtnVariant: ButtonVariant = props?.buttonVariant || theme.music?.buttonVariant || theme.buttonVariant || 'primary'
     const activeSongTitle = props?.songTitle || theme.music?.songTitle || 'Música de fondo'
@@ -33,6 +34,7 @@ export const useMusicPlayer = (props?: MusicPlayerProps) => {
 
     return {
         isPlaying,
+        isMusicVisible,
         audioRef,
         activeVariant,
         activeBtnVariant,
