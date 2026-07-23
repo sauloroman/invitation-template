@@ -6,6 +6,7 @@
   "scripts": {
     "predev": "npm run theme:sync",
     "prebuild": "npm run theme:sync",
+    "create:invitation": "node scripts/create-invitation.js",
     "theme:sync": "node scripts/sync-theme.js",
     "theme:set": "node scripts/set-theme.js",
     "optimize-images": "node scripts/optimize-images.js",
