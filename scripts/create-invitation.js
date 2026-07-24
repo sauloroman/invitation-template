@@ -36,12 +36,6 @@ const askSelect = async (query, options) => {
     return options[choiceNum - 1].value
 }
 
-const askBoolean = async (query, defaultValue = true) => {
-    const defaultStr = defaultValue ? 'S' : 'N'
-    const answer = await ask(`📌 ${query} (S/N)`, defaultStr)
-    return answer.toUpperCase().startsWith('S')
-}
-
 // Copiar directorio recursivamente excluyendo carpetas pesadas
 const copyRecursive = (src, dest) => {
     const ignoreList = ['node_modules', '.git', 'dist', '.gemini', '.vscode']
@@ -64,10 +58,11 @@ const copyRecursive = (src, dest) => {
     }
 }
 
-const formatDateString = (dateStr) => {
+const formatDateFormatted = (dateStr) => {
     try {
-        const dateObj = new Date(dateStr)
-        if (!isNaN(dateObj.getTime())) {
+        const [year, month, day] = dateStr.split('-').map(Number)
+        if (year && month && day) {
+            const dateObj = new Date(year, month - 1, day)
             return dateObj.toLocaleDateString('es-ES', {
                 day: 'numeric',
                 month: 'long',
@@ -75,88 +70,118 @@ const formatDateString = (dateStr) => {
             }).toUpperCase()
         }
     } catch {
-        // Fallback return raw string
+        // Fallback
     }
     return '20 DE NOVIEMBRE DE 2026'
 }
 
 async function main() {
     console.log('\n===================================================================')
-    console.log('  ✨ WIZARD INTERACTIVO: GENERADOR DE INVITACIONES PARA CLIENTES ✨')
+    console.log('  ✨ WIZARD DE CONFIGURACIÓN Y CREACIÓN DE NUEVA INVITACIÓN ✨')
     console.log('===================================================================\n')
 
-    // 1. Datos del Proyecto
-    const defaultFolderName = 'invitacion-cliente-' + Date.now().toString().slice(-4)
-    const folderName = await ask('1. Nombre del proyecto / carpeta cliente', defaultFolderName)
-    const baseOutputDir = await ask('2. Ruta raíz de almacenamiento de clientes', DEFAULT_CLIENTS_DIR)
+    // 0. Nombre del directorio de salida
+    const defaultFolderName = 'invitacion-' + Date.now().toString().slice(-4)
+    const folderName = await ask('📁 Nombre de la carpeta cliente para guardar', defaultFolderName)
+    const baseOutputDir = await ask('📁 Ruta raíz de almacenamiento de clientes', DEFAULT_CLIENTS_DIR)
     const targetPath = path.join(baseOutputDir, folderName)
 
-    console.log(`\n📁 El nuevo proyecto se generará en:\n   ${targetPath}\n`)
+    console.log(`\n📌 El nuevo proyecto se creará en:\n   ${targetPath}\n`)
 
-    // 2. Información del Evento
-    const names = await ask('3. Nombres principales (ej: María & Carlos o Mis XV Sofía)', 'María & Carlos')
-    const eventDate = await ask('4. Fecha y Hora del Evento (YYYY-MM-DDTHH:mm:ss)', '2026-11-20T17:00:00')
-    const subtitle = await ask(
-        '5. Subtítulo / Frase de bienvenida',
-        'Nos complace invitarte a celebrar el día más importante de nuestras vidas'
-    )
-    const welcomeMessage = await ask(
-        '6. Mensaje especial',
-        'Te invitamos de corazón a acompañarnos en este momento tan especial y celebrar juntos el amor que nos une.'
-    )
+    // 1. Nombre de los novios
+    const names = await ask('1. Nombre de los novios / festejados', 'María & Carlos')
 
-    // 3. Tema Visual
-    const fontPack = await askSelect('7. Selecciona el Pack de Fuentes Tipográficas:', [
-        { label: 'Pack 1: Elegante (Playfair Display + Greating + Open Sans)', value: 1 },
-        { label: 'Pack 2: Moderno (Cinzel + Amsterdam + Montserrat)', value: 2 },
-        { label: 'Pack 3: Clásico (EB Garamond + Halimunde + Raleway)', value: 3 },
-        { label: 'Pack 4: Chic (Outfit + Alex Brush + Plus Jakarta Sans)', value: 4 },
-        { label: 'Pack 5: Romántico (Cormorant Garamond + Pinyon Script + Roboto)', value: 5 },
+    // 2. Fecha de la ceremonia religiosa
+    const religiousDate = await ask('2. Fecha de la ceremonia religiosa (YYYY-MM-DD)', '2026-11-20')
+
+    // 3. Hora de la ceremonia religiosa
+    const religiousTime = await ask('3. Hora de la ceremonia religiosa', '17:00 HRS')
+
+    // 4. Dirección Completa de la ceremonia religiosa
+    const religiousAddress = await ask('4. Dirección Completa (Ceremonia Religiosa)', 'Catedral Metropolitana, Centro Histórico')
+
+    // 5. Url de dirección de la ceremonia religiosa
+    const religiousUrl = await ask('5. URL de Google Maps (Ceremonia Religiosa)', 'https://maps.google.com')
+
+    // 6. Fecha de la fiesta/recepción
+    const partyDate = await ask('6. Fecha de la fiesta / recepción (YYYY-MM-DD)', '2026-11-20')
+
+    // 7. Hora de la fiesta/recepción
+    const partyTime = await ask('7. Hora de la fiesta / recepción', '19:00 HRS')
+
+    // 8. Dirección Completa fiesta/recepción
+    const partyAddress = await ask('8. Dirección Completa (Fiesta / Recepción)', 'Salón Los Pinos, Av. Reforma 123')
+
+    // 9. Url de dirección fiesta/recepción
+    const partyUrl = await ask('9. URL de Google Maps (Fiesta / Recepción)', 'https://maps.google.com')
+
+    // 10. Itinerario (bucle do-while hasta ingresar -1)
+    console.log('\n10. Configuración del Itinerario de Eventos:')
+    console.log('    (Captura hora y título. Escribe -1 en la hora cuando termines para continuar)')
+
+    const itineraryItems = []
+    let keepAdding = true
+
+    while (keepAdding) {
+        const timeInput = await ask(
+            `   -> Hora de la amenidad #${itineraryItems.length + 1} (o -1 para finalizar)`,
+            itineraryItems.length === 0 ? religiousTime : '-1'
+        )
+
+        if (timeInput === '-1') {
+            keepAdding = false
+            break
+        }
+
+        const eventTitle = await ask(`   -> Título / Amenidad para ${timeInput}`, 'Ceremonia Religiosa')
+        itineraryItems.push({ time: timeInput, event: eventTitle })
+    }
+
+    if (itineraryItems.length === 0) {
+        itineraryItems.push(
+            { time: religiousTime, event: 'Ceremonia Religiosa' },
+            { time: partyTime, event: 'Recepción & Fiesta' }
+        )
+    }
+
+    // 11. Título de mesa de regalos
+    const presentsTitle = await ask('11. Título de Mesa de Regalos / Tienda', 'Mesa de Regalos Liverpool')
+
+    // 12. Mesa de regalos (link)
+    const presentsUrl = await ask('12. Link / URL de la Mesa de Regalos', 'https://mesaderegalos.liverpool.com.mx')
+
+    // 13. Paleta de colores a usar (1 a 8 según _palettes.scss)
+    const palette = await askSelect('13. Paleta de Colores a usar:', [
+        { label: 'Paleta 1: Dusty Rose & Deep Plum', value: 1 },
+        { label: 'Paleta 2: Crimson Wine & Warm Gold', value: 2 },
+        { label: 'Paleta 3: Olive Sage & Warm Taupe', value: 3 },
+        { label: 'Paleta 4: Forest Green, Soft Lime & Powder Pink', value: 4 },
+        { label: 'Paleta 5: Soft Blue, Rose & Steel Blue', value: 5 },
+        { label: 'Paleta 6: Slate Teal, Mint & Sage', value: 6 },
+        { label: 'Paleta 7: Fresh Lime & Olive Greens', value: 7 },
+        { label: 'Paleta 8: Warm Gold, Ochre & Terracotta Brown', value: 8 },
     ])
 
-    const palette = await askSelect('8. Selecciona la Paleta de Colores:', [
-        { label: 'Paleta 1: Rosa Romántico & Terracota', value: 1 },
-        { label: 'Paleta 2: Verde Olivo & Oro', value: 2 },
-        { label: 'Paleta 3: Azul Mar Profundo & Plata', value: 3 },
-        { label: 'Paleta 4: Vino & Champán', value: 4 },
-        { label: 'Paleta 5: Salvia & Eucalipto', value: 5 },
-        { label: 'Paleta 6: Lavanda & Lila', value: 6 },
-        { label: 'Paleta 7: Esmeralda & Bronce', value: 7 },
-        { label: 'Paleta 8: Crema & Dorado Real', value: 8 },
-        { label: 'Paleta 9: Marrón Cálido & Arena', value: 9 },
-        { label: 'Paleta 10: Negro & Oro Minimalista', value: 10 },
+    // 14. Estilo de Tipografía (1 a 5 según _fonts.scss)
+    const fontPack = await askSelect('14. Estilo de Tipografía (Font Pack):', [
+        { label: 'Pack 1: Alex Brush (Cursive) + Cormorant Garamond (Serif) + Montserrat (Sans)', value: 1 },
+        { label: 'Pack 2: Pinyon Script (Cursive) + Bodoni Moda (Serif) + Plus Jakarta Sans (Sans)', value: 2 },
+        { label: 'Pack 3: Greating (Cursive) + EB Garamond (Serif) + Open Sans (Sans)', value: 3 },
+        { label: 'Pack 4: Amsterdam Signature (Cursive) + Playfair Display (Serif) + Raleway (Sans)', value: 4 },
+        { label: 'Pack 5: Halimunde Signature (Cursive) + Cinzel (Serif) + Outfit (Sans)', value: 5 },
     ])
-
-    const menuSelection = await askSelect('9. Configuración del Menú de Navegación:', [
-        { label: 'Barra Superior Fija (bar)', value: { show: true, variant: 'bar' } },
-        { label: 'Botón Flotante Lateral (floating)', value: { show: true, variant: 'floating' } },
-        { label: 'Desactivar Menú', value: { show: false, variant: 'bar' } },
-    ])
-
-    const musicSelection = await askSelect('10. Configuración del Reproductor de Música:', [
-        { label: 'Botón Flotante de Audio (floating)', value: { show: true, variant: 'floating' } },
-        { label: 'Tarjeta de Reproductor Integrada (card)', value: { show: true, variant: 'card' } },
-        { label: 'Desactivar Música', value: { show: false, variant: 'floating' } },
-    ])
-
-    // 4. Módulos y Funcionalidades
-    const hasTicketingSystem = await askBoolean('11. ¿Habilitar sistema de boletos/tickets de acceso?', false)
-    const hasRSVP = await askBoolean('12. ¿Habilitar confirmación de asistencia RSVP?', true)
-
-    // 5. Secciones
-    console.log('\n--- Configuración de Módulos de Secciones ---')
-    const showCountdown = await askBoolean('13. ¿Incluir sección de Cuenta Regresiva?', true)
-    const showPlaces = await askBoolean('14. ¿Incluir sección de Ubicaciones / Lugares?', true)
-    const showItinerary = await askBoolean('15. ¿Incluir sección de Itinerario?', true)
-    const showDressCode = await askBoolean('16. ¿Incluir sección de Código de Vestimenta?', true)
-    const showGallery = await askBoolean('17. ¿Incluir sección de Galería de Fotos?', true)
-    const showPresents = await askBoolean('18. ¿Incluir sección de Mesa de Regalos?', true)
 
     rl.close()
 
     console.log('\n===================================================================')
-    console.log(' ⏳ GENERANDO PROYECTO DE INVITACIÓN COMERCIAL...')
+    console.log(' ⏳ CREANDO PROYECTO Y GENERANDO ARCHIVO DE CONFIGURACIÓN...')
     console.log('===================================================================\n')
+
+    // Construcción de fecha objetivo ISO para la cuenta regresiva
+    const [relHour = '17', relMinute = '00'] = religiousTime.replace(/[^0-9:]/g, '').split(':')
+    const paddedHour = relHour.padStart(2, '0')
+    const paddedMinute = relMinute.padStart(2, '0')
+    const targetDateIso = `${religiousDate}T${paddedHour}:${paddedMinute}:00`
 
     const configManifest = {
         theme: {
@@ -164,62 +189,66 @@ async function main() {
             palette,
             buttonVariant: 'primary',
             menu: {
-                show: Boolean(menuSelection.show),
-                variant: menuSelection.variant,
+                show: true,
+                variant: 'bar',
                 title: names,
                 buttonVariant: 'icon',
             },
             music: {
-                show: Boolean(musicSelection.show),
-                variant: musicSelection.variant,
+                show: true,
+                variant: 'floating',
                 buttonVariant: 'primary',
                 songTitle: 'Música de fondo',
                 artistName: 'Música del evento',
             },
         },
         config: {
-            hasTicketingSystem,
-            hasRSVP,
-            hasMusic: Boolean(musicSelection.show),
-            hasMenu: Boolean(menuSelection.show),
+            hasTicketingSystem: false,
+            hasRSVP: true,
+            hasMusic: true,
+            hasMenu: true,
         },
         sections: {
             hero: {
                 showHero: true,
                 names,
-                subtitle,
-                date: formatDateString(eventDate),
+                subtitle: 'Nos complace invitarte a celebrar el día más importante de nuestras vidas',
+                date: formatDateFormatted(religiousDate),
                 bgImage: '',
             },
             message: {
                 showMessage: true,
-                message: welcomeMessage,
+                message: 'Te invitamos de corazón a acompañarnos en este momento tan especial y celebrar juntos el amor que nos une.',
             },
             countdown: {
-                showCountdown,
-                targetDate: eventDate,
+                showCountdown: true,
+                targetDate: targetDateIso,
             },
             places: {
-                showPlaces,
+                showPlaces: true,
                 locations: [
                     {
-                        title: 'Ceremonia',
-                        location: 'Lugar por definir',
-                        time: '17:00 HRS',
-                        date: eventDate.split('T')[0],
-                        url: 'https://maps.google.com',
+                        title: 'Ceremonia Religiosa',
+                        location: religiousAddress,
+                        time: religiousTime,
+                        date: religiousDate,
+                        url: religiousUrl,
+                    },
+                    {
+                        title: 'Recepción & Fiesta',
+                        location: partyAddress,
+                        time: partyTime,
+                        date: partyDate,
+                        url: partyUrl,
                     },
                 ],
             },
             itinerary: {
-                showItinerary,
-                itinerary: [
-                    { time: '17:00 HRS', event: 'Ceremonia' },
-                    { time: '19:00 HRS', event: 'Recepción' },
-                ],
+                showItinerary: true,
+                itinerary: itineraryItems,
             },
             dressCode: {
-                showDressCode,
+                showDressCode: true,
                 title: 'Código de Vestimenta',
                 description: 'Te sugerimos vestir de etiqueta semi-formal.',
                 attire: {
@@ -232,15 +261,17 @@ async function main() {
                 },
             },
             gallery: {
-                showGallery,
+                showGallery: true,
                 title: 'Galería de Fotos',
                 images: [],
             },
             presents: {
-                showPresents,
+                showPresents: true,
+                title: presentsTitle,
+                url: presentsUrl,
             },
             confirmation: {
-                showConfirmation: hasRSVP,
+                showConfirmation: true,
             },
         },
     }
@@ -248,25 +279,25 @@ async function main() {
     // Copiar la estructura del template a la carpeta destino
     copyRecursive(TEMPLATE_ROOT, targetPath)
 
-    // Escribir invitation.config.json
+    // Escribir invitation.config.json en la carpeta destino
     const configPath = path.join(targetPath, 'invitation.config.json')
     fs.writeFileSync(configPath, JSON.stringify(configManifest, null, 2), 'utf-8')
 
-    console.log('✅ Archivo invitation.config.json configurado correctamente.')
+    console.log('✅ Archivo invitation.config.json generado exitosamente.')
 
-    // Ejecutar la sincronización del tema en la carpeta del cliente
+    // Sincronizar tokens SCSS
     try {
-        console.log('🎨 Sincronizando tokens de tema SCSS en la carpeta del cliente...')
+        console.log('🎨 Compilando tokens SCSS del tema en la nueva invitación...')
         execSync('node scripts/sync-theme.js', { cwd: targetPath, stdio: 'inherit' })
     } catch (e) {
-        console.warn('⚠️ Nota: Recuerda ejecutar npm run theme:sync en el proyecto generado si es necesario.')
+        console.warn('⚠️ Nota: Recuerda ejecutar npm run theme:sync en la carpeta generada si es necesario.')
     }
 
     console.log('\n===================================================================')
     console.log(' 🎉 ¡PROYECTO DE INVITACIÓN CREADO Y CONFIGURADO CON ÉXITO! 🎉')
     console.log('===================================================================\n')
-    console.log(`📌 Carpeta del Cliente: ${targetPath}\n`)
-    console.log('Para iniciar el servidor de desarrollo del nuevo proyecto, ejecuta:\n')
+    console.log(`📌 Ubicación: ${targetPath}\n`)
+    console.log('Para iniciar el proyecto ejecuta:\n')
     console.log(`   cd "${targetPath}"`)
     console.log('   npm install')
     console.log('   npm run dev\n')

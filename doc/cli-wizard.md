@@ -1,6 +1,6 @@
 # 🧙‍♂️ CLI Wizard: Generador Interactivo de Invitaciones (`create-invitation`)
 
-El asistente interactivo `create-invitation` es una herramienta CLI para generar rápidamente proyectos independientes de invitación para clientes, configurando sus tipografías, colores, variantes de menú, música y secciones sin tocar código.
+El asistente interactivo `create-invitation` solicita los datos completos del evento para configurar y desplegar una nueva invitación para clientes sin tocar una sola línea de código.
 
 Ruta de destino predeterminada: `C:\Users\roman\OneDrive\Escritorio\proyectos-desarrollo\invitaciones\Clientes`
 
@@ -16,20 +16,28 @@ npm run create:invitation
 
 ---
 
-## 📋 Pasos del Asistente
+## 📋 Las 14 Preguntas del Asistente
 
-1. **Ruta y Nombre**: Te solicita el nombre de la carpeta cliente (ej: `boda-maria-y-carlos`) y confirma la carpeta destino predeterminada.
-2. **Información del Evento**: Nombres principales, fecha/hora en formato ISO y mensaje de bienvenida.
-3. **Packs Tipográficos**: Selección interactiva de los Packs 1 al 5.
-4. **Paletas de Colores**: Selección interactiva de las Paletas 1 a la 10.
-5. **Menú y Música**: Elección de variante (`bar`, `floating`, o Desactivado).
-6. **Módulos y Secciones**: Preguntas (S/N) para incluir Cuenta Regresiva, Lugares, Itinerario, Código de Vestimenta, Galería, Regalos, Confirmación y Sistema de Tickets.
+1. **Nombre de los novios / festejados**: (ej: `María & Carlos`).
+2. **Fecha de la ceremonia religiosa**: (ej: `2026-11-20`).
+3. **Hora de la ceremonia religiosa**: (ej: `17:00 HRS`).
+4. **Dirección Completa (Ceremonia Religiosa)**: (ej: `Catedral Metropolitana`).
+5. **URL de Google Maps (Ceremonia Religiosa)**: (ej: `https://maps.google.com/...`).
+6. **Fecha de la fiesta / recepción**: (ej: `2026-11-20`).
+7. **Hora de la fiesta / recepción**: (ej: `19:00 HRS`).
+8. **Dirección Completa (Fiesta / Recepción)**: (ej: `Salón Los Pinos`).
+9. **URL de Google Maps (Fiesta / Recepción)**: (ej: `https://maps.google.com/...`).
+10. **Itinerario de eventos**: Bucle interactivo que solicita la hora y el título de cada amenidad hasta ingresar `-1`.
+11. **Título de Mesa de Regalos**: (ej: `Mesa de Regalos Liverpool`).
+12. **Link / URL de la Mesa de Regalos**: (ej: `https://mesaderegalos.liverpool.com.mx`).
+13. **Paleta de Colores a usar**: (Selección interactiva de las 8 paletas oficiales registradas en `_palettes.scss`).
+14. **Estilo de Tipografía (Font Pack)**: (Selección interactiva de los 5 Packs oficiales registrados en `_fonts.scss`).
 
 ---
 
 ## ⚙️ ¿Qué hace internamente?
 
-1. Duplica la estructura limpia de la plantilla base en `Clientes/<nombre-proyecto>`.
-2. Genera el archivo manifiesto [invitation.config.json](file:///c:/Users/roman/OneDrive/Escritorio/proyectos-desarrollo/invitaciones/invitation-template/invitation.config.json) con todas las respuestas.
-3. Ejecuta automáticamente `npm run theme:sync` en la carpeta destino para compilar el tema SCSS.
-4. Te proporciona los comandos para entrar e iniciar la invitación (`cd "C:\Users\roman\OneDrive\Escritorio\proyectos-desarrollo\invitaciones\Clientes\<nombre-proyecto>" && npm run dev`).
+1. Duplica la estructura del proyecto en `Clientes/<nombre-carpeta>`.
+2. Genera el manifiesto [invitation.config.json](file:///c:/Users/roman/OneDrive/Escritorio/proyectos-desarrollo/invitaciones/invitation-template/invitation.config.json) con todas las respuestas capturadas.
+3. Ejecuta `node scripts/sync-theme.js` en la carpeta generada para compilar los tokens de fuentes y colores.
+4. Muestra las instrucciones finales para ejecutar `npm run dev` en el nuevo proyecto.
